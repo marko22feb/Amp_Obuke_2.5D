@@ -7,6 +7,8 @@ public class NavigationLayoutObject : MonoBehaviour
 {
     public int ColumnNumb;
     public int RowNumb;
+    public NavigationLayoutObject prevNLO;
+    public Tooltip tooltip;
 
     private void Start()
     {

@@ -7,7 +7,16 @@ public class NavigationManager : MonoBehaviour
 {
     public NavigationLayoutObject navObj;
     public NavigationItem selectedNavItem;
-    
+    public static NavigationManager navM;
+
+    public void Awake()
+    {
+        if (navM == null)
+        {
+            navM = this;
+        }
+    }
+
     public void Start()
     {
         navObj = GameObject.Find("InventoryPanel").GetComponent<NavigationLayoutObject>();
@@ -26,6 +35,10 @@ public class NavigationManager : MonoBehaviour
     public void ClearSelection()
     {
         selectedNavItem.DeSelect();
+    }
+
+    public void ExitInvenory()
+    {
         Cursor.visible = false;
         GameController.control.GetComponent<PlayerController>().inputType = PlayerController.InputType.Game;
         selectedNavItem = null;
@@ -76,7 +89,7 @@ public class NavigationManager : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                ClearSelection();
+                selectedNavItem.Escape();
             }
         }
     }

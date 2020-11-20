@@ -23,20 +23,26 @@ public class NavigationItem : MonoBehaviour
     [HideInInspector]
     public NextNav Right = new NextNav(Direction.right, null);
 
-    public UnityEvent FunctionToCall;
+    public UnityEvent FunctionToCallOnEnter;
+    public UnityEvent FunctionToCallOnExit;
 
     public void Select()
     {
-        transform.GetChild(0).GetComponent<Image>().color = Color.blue;
+        transform.GetChild(0).GetChild(0).GetComponent<Image>().color = Color.blue;
     }
 
     public void DeSelect()
     {
-        transform.GetChild(0).GetComponent<Image>().color = Color.white;
+        transform.GetChild(0).GetChild(0).GetComponent<Image>().color = Color.white;
     }
 
     public void Use()
     {
-        FunctionToCall.Invoke();
+        FunctionToCallOnEnter.Invoke();
+    }
+
+    public void Escape()
+    {
+        FunctionToCallOnExit.Invoke();
     }
 }
