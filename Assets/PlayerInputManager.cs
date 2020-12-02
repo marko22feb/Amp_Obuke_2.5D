@@ -6,7 +6,6 @@ public class PlayerInputManager : PawnController
 {
     public float speed = 1;
     public Transform parentTransform;
-    public Camera mainPlayerCamera;
 
     public override void Start()
     {
@@ -24,7 +23,7 @@ public class PlayerInputManager : PawnController
     public void Update()
     {
         if (!hasAuthority) return;
-        if (Input.GetButton("AttackButton"))
+        if (Input.GetButtonUp("AttackButton"))
         {
             cmdAttack();
         }

@@ -46,7 +46,7 @@ public class SmoothMouseLook : MonoBehaviour
         // as an acceleration (ms^-2)
         moveDirection.y -= gravity * Time.deltaTime;
 
-        // Move the controller
+        //Move the controller
         characterController.Move(moveDirection * Time.deltaTime);
 
         // Player and Camera rotation

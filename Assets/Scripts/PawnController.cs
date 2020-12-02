@@ -14,6 +14,10 @@ public class PawnController : NetworkBehaviour
     public bool ComboChained = false;
     public bool AttackSpammed = false;
     public List<GameObject> TargetsHit;
+    public GameObject bulletPrefab;
+    public GameObject gunMuzzle;
+    public Camera mainPlayerCamera;
+
 
     public virtual void Start()
     {
@@ -36,8 +40,17 @@ public class PawnController : NetworkBehaviour
     public void Attack()
     {
         anim.SetTrigger("ExecuteAttack");
-        if (CanChainCombo) ComboChained = true;
-        if (ComboChained) AttackSpammed = true;
+
+        Ray ray = mainPlayerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        Vector3 impactPoint;
+        impactPoint = ray.GetPoint(10000);
+
+        GameObject tempBullet = Instantiate(bulletPrefab, gunMuzzle.transform.position, gunMuzzle.transform.rotation);
+        tempBullet.GetComponent<Rigidbody>().velocity = (impactPoint - gunMuzzle.transform.position).normalized * 30f;
+        tempBullet.GetComponent<Bullet>().Owner = this.gameObject;
+
+  //      if (CanChainCombo) ComboChained = true;
+  //      if (ComboChained) AttackSpammed = true;
     }
 
     [ClientRpc]
