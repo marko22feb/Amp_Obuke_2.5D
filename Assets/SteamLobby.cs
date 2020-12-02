@@ -45,7 +45,7 @@ public class SteamLobby : MonoBehaviour
     {
         if (callback.m_eResult != EResult.k_EResultOK) { HostButton.SetActive(true); return; }
 
-        networkManager.OnStartHost();
+        networkManager.StartHost();
         SteamMatchmaking.SetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HostAdressKey, SteamUser.GetSteamID().ToString());
     }
 

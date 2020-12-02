@@ -16,6 +16,9 @@ public class PlayerInputManager : PawnController
         {
             Destroy(mainPlayerCamera);
         }
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     public void Update()
