@@ -384,7 +384,6 @@ GameObject:
   - component: {fileID: 1642671624}
   - component: {fileID: 1642671626}
   - component: {fileID: 1642671625}
-  - component: {fileID: 3208584986379557978}
   m_Layer: 0
   m_Name: PlayerCamera
   m_TagString: Untagged
@@ -457,25 +456,6 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1642671623}
   m_Enabled: 1
---- !u!114 &3208584986379557978
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1642671623}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 895d476e1a0f9fb4faefd25d94d78a36, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 7.5
-  jumpSpeed: 8
-  gravity: 20
-  playerCameraParent: {fileID: 0}
-  lookSpeed: 2
-  lookXLimit: 60
-  canMove: 1
 --- !u!1 &3667332677253282017
 GameObject:
   m_ObjectHideFlags: 0
@@ -524,8 +504,9 @@ GameObject:
   - component: {fileID: 1116316883547752509}
   - component: {fileID: 6639293670087390132}
   - component: {fileID: 7313063246127637337}
-  - component: {fileID: 7251233675581513352}
-  - component: {fileID: 558425043293984603}
+  - component: {fileID: 3054693541788611376}
+  - component: {fileID: 1240841726667552357}
+  - component: {fileID: 5205052698261999801}
   m_Layer: 8
   m_Name: ShooterCharacter
   m_TagString: Player
@@ -614,6 +595,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  SL: {fileID: 0}
   InputEnabled: 1
   CanInflictDamage: 0
   IsLogicEnabled: 1
@@ -695,7 +677,7 @@ MonoBehaviour:
   syncInterval: 0.1
   clientAuthority: 1
   animator: {fileID: 4635155227243252959}
---- !u!143 &7251233675581513352
+--- !u!143 &3054693541788611376
 CharacterController:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -706,14 +688,14 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 0.2
+  m_Height: 0.4
   m_Radius: 0.05
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.09, z: 0}
---- !u!114 &558425043293984603
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1240841726667552357
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -725,6 +707,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 895d476e1a0f9fb4faefd25d94d78a36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   speed: 7.5
   jumpSpeed: 8
   gravity: 20
@@ -732,6 +716,25 @@ MonoBehaviour:
   lookSpeed: 2
   lookXLimit: 60
   canMove: 1
+--- !u!114 &5205052698261999801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4635155227235876689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 765bca93bdc9221499b3b3e9db1558f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  currentAmmo: 0
+  maximumAmmo: 200
+  currentClipAmmo: 0
+  clipMaxAmmo: 30
+  AmmoText: {fileID: 0}
 --- !u!1 &4946971239890373699
 GameObject:
   m_ObjectHideFlags: 0

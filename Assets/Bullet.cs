@@ -31,7 +31,8 @@ public class Bullet : NetworkBehaviour
     [ClientRpc]
     public void OnImpact()
     {
-        Instantiate(BulletParticle, transform.position, transform.rotation);
+        GameObject bulletParticle = Instantiate(BulletParticle, transform.position, transform.rotation);
         Destroy(gameObject);
+        NetworkServer.Spawn(bulletParticle, gameObject);
     }
 }

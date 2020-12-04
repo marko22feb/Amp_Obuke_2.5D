@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
+using Mirror;
 
 [RequireComponent(typeof(CharacterController))]
 
-public class SmoothMouseLook : MonoBehaviour
+public class SmoothMouseLook : NetworkBehaviour
 {
     public float speed = 7.5f;
     public float jumpSpeed = 8.0f;
@@ -26,6 +27,8 @@ public class SmoothMouseLook : MonoBehaviour
 
     void Update()
     {
+        if (!hasAuthority) return;
+
         if (characterController.isGrounded)
         {
             // We are grounded, so recalculate move direction based on axes

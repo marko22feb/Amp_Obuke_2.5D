@@ -28,6 +28,11 @@ public class PlayerInputManager : PawnController
             cmdAttack();
         }
 
+        if (Input.GetButtonUp("Reload"))
+        {
+            SL.Reload();
+        }
+
         if (Input.GetAxis("Horizontal") != 0 && InputEnabled) 
         {
             Vector3 newPosition = new Vector3(transform.position.x + Input.GetAxis("Horizontal") * speed * Time.deltaTime, transform.position.y, transform.position.z);

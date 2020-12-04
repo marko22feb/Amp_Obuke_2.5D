@@ -7,6 +7,7 @@ using Mirror;
 public class PawnController : NetworkBehaviour
 {
     Animator anim;
+    public ShootingLogic SL;
     public bool InputEnabled = true;
     public bool CanInflictDamage = false;
     public bool IsLogicEnabled = true;
@@ -19,9 +20,11 @@ public class PawnController : NetworkBehaviour
     public Camera mainPlayerCamera;
 
 
+
     public virtual void Start()
     {
-        anim = GetComponent<Animator>(); 
+        anim = GetComponent<Animator>();
+        SL = GetComponent<ShootingLogic>();
     }
 
     [Command]
@@ -39,6 +42,8 @@ public class PawnController : NetworkBehaviour
 
     public void Attack()
     {
+        if (SL.currentClipAmmo <= 0) return;
+
         anim.SetTrigger("ExecuteAttack");
 
         Ray ray = mainPlayerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
@@ -49,8 +54,11 @@ public class PawnController : NetworkBehaviour
         tempBullet.GetComponent<Rigidbody>().velocity = (impactPoint - gunMuzzle.transform.position).normalized * 30f;
         tempBullet.GetComponent<Bullet>().Owner = this.gameObject;
 
-  //      if (CanChainCombo) ComboChained = true;
-  //      if (ComboChained) AttackSpammed = true;
+        SL.SubstractAmmo(1);
+        NetworkServer.Spawn(tempBullet, gameObject);
+
+   //     if (CanChainCombo) ComboChained = true;
+   //     if (ComboChained) AttackSpammed = true;
     }
 
     [ClientRpc]

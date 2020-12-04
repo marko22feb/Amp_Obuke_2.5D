@@ -22,6 +22,7 @@ public class Inventory : MonoBehaviour
     public struct ItemData
     {
         public int ItemID;
+        public int MaxStack;
         public string Name;
         public string Description;
         public ItemType itemType;
@@ -29,7 +30,7 @@ public class Inventory : MonoBehaviour
         public Sprite sprite;
         public Mesh armorMesh;
 
-        public ItemData(int itemID) { ItemID = itemID; Name = ""; Description = ""; itemType = ItemType.Consumable; equipType = EquipType.Null ; sprite = Resources.Load("Assets/Sprites/22.png") as Sprite; armorMesh = null; }
+        public ItemData(int itemID) { ItemID = itemID; MaxStack = 999; Name = ""; Description = ""; itemType = ItemType.Consumable; equipType = EquipType.Null ; sprite = Resources.Load("Assets/Sprites/22.png") as Sprite; armorMesh = null; }
     }
 
     [Serializable]
@@ -68,8 +69,7 @@ public class Inventory : MonoBehaviour
             invData[i] = new InventoryData(-1, 0);
         }
 
-        invData[15] = new InventoryData(1, 4);
-        invData[22] = new InventoryData(2, 92);
+        invData[0] = new InventoryData(1, 85);
     }
 
     public ItemData GetItem(int ItemID)
@@ -95,6 +95,11 @@ public class Inventory : MonoBehaviour
         return invData[slotID];
     }
 
+    public void SetSlot(int slotID, int itemID, int newAmount)
+    {
+        invData[slotID] = new Inventory.InventoryData(itemID, newAmount);
+    }
+
     public EquipmentData GetEquip(EquipType type)
     {
         EquipmentData equip = new EquipmentData(EquipType.Null, -1, 0);
@@ -110,5 +115,102 @@ public class Inventory : MonoBehaviour
     public void SetEquippedItem()
     {
 
+    }
+
+    public void AddItem(int ItemID, int amount, out bool Sucess)
+    {
+        bool isSucess;
+        bool hasSlot = false;
+        ItemData item = GetItem(ItemID);
+        int slotID;
+        InventoryData data;
+
+        if (amount > 0)
+        FetchInventoryByID(ItemID, true, out slotID, out data);
+        else FetchInventoryByID(ItemID, false, out slotID, out data);
+
+        if (amount > 0)
+        {
+            if (data.Amount > 0)
+            {
+                if (data.Amount + amount <= item.MaxStack)
+                {
+                    SetSlot(slotID, ItemID, data.Amount + amount);
+                }
+                else
+                {
+                    SetSlot(slotID, ItemID, item.MaxStack);
+                    AddItem(ItemID, item.MaxStack - data.Amount + amount, out isSucess);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < invData.Count; i++)
+                {
+                    if (invData[i].ItemID == -1)
+                    {
+                        if (amount > item.MaxStack)
+                        {
+                            SetSlot(i, ItemID, item.MaxStack);
+                            AddItem(ItemID, item.MaxStack - amount, out isSucess);
+                        } else
+                        {
+                            SetSlot(i, ItemID, amount);
+                        }
+                        hasSlot = true;
+                        break;
+                    }
+                }
+
+                if (!hasSlot) { Debug.Log("InventoryFull");}
+            }
+        }
+        else
+        {
+            if (data.Amount > 0)
+            {
+                if (data.Amount + amount >= 1)
+                {
+                    SetSlot(slotID, ItemID, data.Amount + amount);
+                }
+                else
+                {
+                    SetSlot(slotID, -1, 0);
+                    AddItem(ItemID, data.Amount + amount, out isSucess);
+                }
+            }
+        }
+
+        Sucess = !hasSlot;
+    }
+
+    public void FetchInventoryByID(int itemID, bool ShouldHaveSpace, out int slotID, out InventoryData data)
+    {
+        InventoryData tempInv = new InventoryData (-1,0);
+        int index = 0;
+        ItemData item = GetItem(itemID);
+
+        foreach(InventoryData inv in invData)
+        {
+            if (inv.ItemID == itemID) 
+            {
+                bool check = true;
+                if (ShouldHaveSpace)
+                {
+                    if (inv.Amount == item.MaxStack)
+                    {
+                        check = false;
+                    }
+                }
+                if (check)
+                {
+                    tempInv = inv;
+                    break;
+                }
+            }
+            index++; 
+        }
+        slotID = index;
+        data = tempInv;
     }
 }
