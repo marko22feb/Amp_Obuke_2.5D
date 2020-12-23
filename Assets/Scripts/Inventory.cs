@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class Inventory : MonoBehaviour
 {
     public static Inventory inv;
+    private ShootingLogic SL;
 
     public enum ItemType
     {
@@ -29,8 +30,9 @@ public class Inventory : MonoBehaviour
         public EquipType equipType;
         public Sprite sprite;
         public Mesh armorMesh;
+        public bool IsUnique;
 
-        public ItemData(int itemID) { ItemID = itemID; MaxStack = 999; Name = ""; Description = ""; itemType = ItemType.Consumable; equipType = EquipType.Null ; sprite = Resources.Load("Assets/Sprites/22.png") as Sprite; armorMesh = null; }
+        public ItemData(int itemID) { ItemID = itemID; MaxStack = 999; Name = ""; Description = ""; itemType = ItemType.Consumable; equipType = EquipType.Null ; sprite = Resources.Load("Assets/Sprites/22.png") as Sprite; armorMesh = null; IsUnique = false; }
     }
 
     [Serializable]
@@ -52,10 +54,25 @@ public class Inventory : MonoBehaviour
         public EquipmentData(EquipType equip_Type, int itemID, int amount) {equipType = equip_Type; ItemID = itemID; Amount = amount; }
     }
 
+    [Serializable]
+    public struct ItemSets
+    {
+        public List<int> ItemIDs;
+        public List<float> ChanceToDrop;
+        public List<int> minAmount;
+        public List<int> maxAmouunt;
+
+        public ItemSets(List<int> itemIDs, List<float> chanceToDrop, List<int> MinAmount, List<int> MaxAmouunt)
+        {
+            ItemIDs = itemIDs; ChanceToDrop = chanceToDrop; minAmount = MinAmount; maxAmouunt = MaxAmouunt;
+        }
+    }
+
 
     public List<ItemData> itemData = new List<ItemData>();
     public List<EquipmentData> equipData = new List<EquipmentData>();
     public List<InventoryData> invData = new List<InventoryData>();
+    public List<ItemSets> itemSets = new List<ItemSets>();
 
     private void Awake()
     {
@@ -70,6 +87,13 @@ public class Inventory : MonoBehaviour
         }
 
         invData[0] = new InventoryData(1, 85);
+
+        
+    }
+
+    public void OnEnable()
+    {
+        SL = GameObject.FindWithTag("Player").GetComponent<ShootingLogic>();
     }
 
     public ItemData GetItem(int ItemID)
@@ -119,15 +143,19 @@ public class Inventory : MonoBehaviour
 
     public void AddItem(int ItemID, int amount, out bool Sucess)
     {
+        
         bool isSucess;
         bool hasSlot = false;
         ItemData item = GetItem(ItemID);
+        Debug.Log(item.Name + " : " + amount);
         int slotID;
         InventoryData data;
 
         if (amount > 0)
         FetchInventoryByID(ItemID, true, out slotID, out data);
         else FetchInventoryByID(ItemID, false, out slotID, out data);
+
+        if (slotID == -1) { Debug.Log("Can't add more Unique items."); Sucess = false; return; }
 
         if (amount > 0)
         {
@@ -162,7 +190,7 @@ public class Inventory : MonoBehaviour
                     }
                 }
 
-                if (!hasSlot) { Debug.Log("InventoryFull");}
+                if (!hasSlot) { Debug.Log("InventoryFull");} else { hasSlot = false; }
             }
         }
         else
@@ -181,18 +209,22 @@ public class Inventory : MonoBehaviour
             }
         }
 
+        if (SL == null) SL = GameObject.FindWithTag("Player").GetComponent<ShootingLogic>();
+        SL.RefreshAmounts();
+
         Sucess = !hasSlot;
     }
 
     public void FetchInventoryByID(int itemID, bool ShouldHaveSpace, out int slotID, out InventoryData data)
     {
-        InventoryData tempInv = new InventoryData (-1,0);
+        InventoryData tempInv = new InventoryData(-1, 0);
         int index = 0;
+        bool CanAdd = true;
         ItemData item = GetItem(itemID);
 
-        foreach(InventoryData inv in invData)
+        foreach (InventoryData inv in invData)
         {
-            if (inv.ItemID == itemID) 
+            if (inv.ItemID == itemID)
             {
                 bool check = true;
                 if (ShouldHaveSpace)
@@ -207,10 +239,27 @@ public class Inventory : MonoBehaviour
                     tempInv = inv;
                     break;
                 }
+                else
+                {
+                    if (item.IsUnique)
+                    {
+                        CanAdd = false;
+                        break;
+                    }
+                }
             }
-            index++; 
+            index++;
         }
-        slotID = index;
-        data = tempInv;
+
+        if (CanAdd)
+        {
+            slotID = index;
+            data = tempInv;
+        }
+        else
+        {
+            slotID = -1;
+            data = new InventoryData(-1, 0);
+        }
     }
 }

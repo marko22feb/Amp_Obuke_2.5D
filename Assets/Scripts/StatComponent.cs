@@ -27,10 +27,22 @@ public class StatComponent : NetworkBehaviour
             Floating_HP_Bar.transform.parent.GetComponent<Canvas>().enabled = true;
         }
 
+        GetComponent<NetworkIdentity>().AssignClientAuthority(this.GetComponent< NetworkIdentity > ().connectionToClient);
+    }
+
+    [Command]
+    public void ModifyHP(float amount)
+    {
+        ModifyHPRPC(amount);
     }
 
     [ClientRpc]
-    public void ModifyHP(float amount)
+    public void ModifyHPRPC(float amount)
+    {
+        ModifyStat(amount);
+    }
+
+    public void ModifyStat(float amount)
     {
         CurrentHP += amount;
         if (CurrentHP <= 0)
@@ -47,6 +59,7 @@ public class StatComponent : NetworkBehaviour
             HP_Bar.value = CurrentHP / MaxHP;
         }
     }
+
 
     [ClientRpc]
     public void Death()

@@ -28,37 +28,34 @@ public class PawnController : NetworkBehaviour
     }
 
     [Command]
-    public void cmdAttack()
+    public void cmdAttack(Vector3 vel, GameObject ow)
     {
-        //anticheat system
-        rpcAttack();
+        GameObject tempBullet = NetworkManager.Instantiate(bulletPrefab, gunMuzzle.transform.position, gunMuzzle.transform.rotation);
+        tempBullet.GetComponent<Rigidbody>().velocity = vel;
+        tempBullet.GetComponent<Bullet>().Owner = ow;
+
+        NetworkServer.Spawn(tempBullet, gameObject);
+       rpcAttack(tempBullet, vel, ow);
     }
 
     [ClientRpc]
-    public void rpcAttack()
+    public void rpcAttack(GameObject bullet, Vector3 vel, GameObject ow)
     {
-        Attack();
+        bullet.GetComponent<Rigidbody>().velocity = vel;
+        bullet.GetComponent<Bullet>().Owner = ow;
     }
 
     public void Attack()
     {
-        if (SL.currentClipAmmo <= 0) return;
-
         anim.SetTrigger("ExecuteAttack");
+        SL.SubstractAmmo(1);
 
         Ray ray = mainPlayerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         Vector3 impactPoint;
         impactPoint = ray.GetPoint(10000);
+        Vector3 vel = (impactPoint - gunMuzzle.transform.position).normalized * 30f;
 
-        GameObject tempBullet = Instantiate(bulletPrefab, gunMuzzle.transform.position, gunMuzzle.transform.rotation);
-        tempBullet.GetComponent<Rigidbody>().velocity = (impactPoint - gunMuzzle.transform.position).normalized * 30f;
-        tempBullet.GetComponent<Bullet>().Owner = this.gameObject;
-
-        SL.SubstractAmmo(1);
-        NetworkServer.Spawn(tempBullet, gameObject);
-
-   //     if (CanChainCombo) ComboChained = true;
-   //     if (ComboChained) AttackSpammed = true;
+        cmdAttack(vel, this.gameObject);
     }
 
     [ClientRpc]

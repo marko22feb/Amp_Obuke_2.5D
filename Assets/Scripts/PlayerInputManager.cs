@@ -25,7 +25,7 @@ public class PlayerInputManager : PawnController
         if (!hasAuthority) return;
         if (Input.GetButtonUp("AttackButton"))
         {
-            cmdAttack();
+            Attack();
         }
 
         if (Input.GetButtonUp("Reload"))

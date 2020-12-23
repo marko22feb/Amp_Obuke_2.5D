@@ -28,7 +28,7 @@ public class EnemyController : PawnController
             float distance = Vector3.Distance(this.transform.position, Target.transform.position);
             if (distance < 1.55f)
             {
-                Attack();
+   //             Attack();
             } else
             {
                 GetComponent<NavMeshAgent>().Move(Target.transform.position);

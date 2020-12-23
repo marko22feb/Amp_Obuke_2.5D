@@ -9,6 +9,11 @@ public class Bullet : NetworkBehaviour
     public GameObject BulletParticle;
     public StatComponent stat;
 
+    public void Start()
+    {
+        GetComponent<NetworkIdentity>().AssignClientAuthority(this.GetComponent<NetworkIdentity>().connectionToClient);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject != Owner)
@@ -16,23 +21,46 @@ public class Bullet : NetworkBehaviour
             if (other.GetComponent<StatComponent>() != null)
             {
                 stat = other.GetComponent<StatComponent>();
-                EnemyHit();
+                EnemyHitCMD(other.gameObject);
             }
             OnImpact();
         }
     }
 
-    [ClientRpc]
-    public void EnemyHit()
+    [Command]
+    public void EnemyHitCMD(GameObject target)
     {
-        stat.ModifyHP(-10f);
+        EnemyHitRPC(target);
     }
 
     [ClientRpc]
+    public void EnemyHitRPC(GameObject target)
+    {
+  //      target.GetComponent<StatComponent>().ModifyHP(-10f);
+        EnemyHit(target);
+    }
+
+    public void EnemyHit(GameObject target)
+    {
+        target.GetComponent<StatComponent>().ModifyHP(-10f);
+    }
+
+    [ClientRpc]
+    public void OnImpactRPC()
+    {
+        Impact();
+    }
+
+    [Command]
     public void OnImpact()
     {
+        OnImpactRPC();
+    }
+
+    public void Impact()
+    {
         GameObject bulletParticle = Instantiate(BulletParticle, transform.position, transform.rotation);
-        Destroy(gameObject);
         NetworkServer.Spawn(bulletParticle, gameObject);
+        Destroy(gameObject);
     }
 }
