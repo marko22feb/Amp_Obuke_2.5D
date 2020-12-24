@@ -1,18 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class DialogueEvents : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+
+    public UnityEvent ThisFunctionToCall;
+
+    public void AddAmmo(int amount)
     {
-        
+        bool temp;
+        Inventory.inv.AddItem(1, amount, out temp);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void FillMaxAmmo()
     {
-        
+
     }
 }

@@ -34,17 +34,35 @@ public class Dialogue : MonoBehaviour
         SpawnDialogueChoices();
     }
 
+    public void OnDialogueOver()
+    {
+        Time.timeScale = 1;
+        dialogueCanvas.enabled = false;
+    }
+
     public void NextDialogue(int index)
     {
-        currentDialogue = index;
-        SpawnDialogueChoices();
+        if (events[index] != null) events[index].ThisFunctionToCall.Invoke();
+
+        if (dialogueLeadTo[index].LeadTo[0] > 0)
+        {
+            currentDialogue = index;
+            SpawnDialogueChoices();
+        } else
+        {
+            OnDialogueOver();
+        }
     }
 
     public void SpawnDialogueChoices()
     {
-        for (int i = 0; i < dialogueMenu.transform.childCount; i++)
+        int loopcount = dialogueMenu.transform.childCount;
+        if (loopcount > 0)
         {
-            Destroy(dialogueMenu.transform.GetChild(0).gameObject);
+            for (int i = 0; i < loopcount; i++)
+            {
+                Destroy(dialogueMenu.transform.GetChild(i).gameObject);
+            }
         }
 
         for (int i = 0; i < dialogueLeadTo[currentDialogue].LeadTo.Count; i++)
@@ -55,6 +73,15 @@ public class Dialogue : MonoBehaviour
                 temp.GetComponentInChildren<Text>().text = Dialogues[dialogueLeadTo[currentDialogue].LeadTo[i]];
                 temp.GetComponent<DialogueChoice>().dialogue = this;
                 temp.GetComponent<DialogueChoice>().Index = dialogueLeadTo[currentDialogue].LeadTo[i];
+
+                if (conditions[dialogueLeadTo[currentDialogue].LeadTo[i]] != null)
+                {
+                    if (!conditions[dialogueLeadTo[currentDialogue].LeadTo[i]].IsConditionMet())
+                    {
+                        temp.GetComponentInChildren<Text>().color = Color.grey;
+                        temp.GetComponent<DialogueChoice>().IsConditionMet = false;
+                    }
+                }
             }
             else
             {
