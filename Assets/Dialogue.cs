@@ -76,7 +76,7 @@ public class Dialogue : MonoBehaviour
 
                 if (conditions[dialogueLeadTo[currentDialogue].LeadTo[i]] != null)
                 {
-                    if (!conditions[dialogueLeadTo[currentDialogue].LeadTo[i]].IsConditionMet())
+                    if (!conditions[dialogueLeadTo[currentDialogue].LeadTo[i]].IsConditionMet(-1))
                     {
                         temp.GetComponentInChildren<Text>().color = Color.grey;
                         temp.GetComponent<DialogueChoice>().IsConditionMet = false;

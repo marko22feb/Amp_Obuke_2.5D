@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ConiditionAmmo : DialogueConditions
 {
-    public override bool IsConditionMet()
+    public override bool IsConditionMet(int Index)
     {
         int slotid;
         Inventory.InventoryData data;
