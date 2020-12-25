@@ -45,7 +45,7 @@ public class DialogueGraphView : GraphView
         ButtontextField.SetValueWithoutNotify(ChoiceDialogueText);
         node.titleContainer.Add(ButtontextField);
 
-        Button choiceButton = new Button(clickEvent: () => { AddChoice(node, ChoiceDialogueText == "New Choice" ? "" : ChoiceDialogueText); });
+        Button choiceButton = new Button(clickEvent: () => { AddChoice(node, ChoiceDialogueText == "New Choice" ? "" : ChoiceDialogueText); ButtontextField.SetValueWithoutNotify("New Choice"); ChoiceDialogueText = "New Choice"; });
         choiceButton.text = "Add Choice";
         node.titleButtonContainer.Add(choiceButton);
 
@@ -129,7 +129,6 @@ public class DialogueGraphView : GraphView
 
         node.RefreshExpandedState();
         node.RefreshPorts();
-
     }
 
     private void RemoveChoice(DialogueNode node, Port choicePort)
